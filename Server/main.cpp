@@ -393,62 +393,6 @@ void ReceiveAndSendKey(SOCKET clientSocket)
     }
 }
 
-void ReceiveKeys(SOCKET clientSocket, bool currentKeys[256])
-{
-    while (true)
-    {
-        int key;
-        int k;
-        int bytesReceived = recv(clientSocket, reinterpret_cast<char*>(&k), sizeof(k), 0);
-        int bytesRead = recv(clientSocket, reinterpret_cast<char*>(&key), sizeof(key), 0);
-        currentKeys[key] = k;
-        if (bytesReceived == SOCKET_ERROR)
-        {
-            std::cerr << "Failed to receive data" << std::endl;
-            break;
-        }
-        if (bytesRead == SOCKET_ERROR)
-        {
-            std::cerr << "Failed to receive data." << std::endl;
-            break;
-        }
-    }
-}
-
-void SendKeys(SOCKET clientSocket, bool currentKeys[256], bool previousKeys[256])
-{
-    while (true)
-    {
-        for (int i = 1; i <= 255; i++)
-        {
-            if (currentKeys[i] && !previousKeys[i])
-            {
-                INPUT input{};
-                input.type = INPUT_KEYBOARD;
-                input.ki.wVk = i;
-                input.ki.wScan = MapVirtualKeyEx(i, MAPVK_VK_TO_VSC, GetKeyboardLayout(0));
-                input.ki.dwFlags = 0;
-
-                SendInput(1, &input, sizeof(INPUT));
-                previousKeys[i] = true;
-            }
-            else if (!currentKeys[i] && previousKeys[i])
-            {
-                INPUT input{};
-                input.type = INPUT_KEYBOARD;
-                input.ki.wVk = i;
-                input.ki.wScan = MapVirtualKeyEx(i, MAPVK_VK_TO_VSC, GetKeyboardLayout(0));
-                input.ki.dwFlags = KEYEVENTF_KEYUP;
-
-                SendInput(1, &input, sizeof(INPUT));
-                previousKeys[i] = false;
-            }
-        }
-
-        Sleep(1); // Adjust the sleep duration as needed
-    }
-}
-
 int main() {
     SOCKET serverSocket;
     initServer(serverSocket);
@@ -476,20 +420,12 @@ int main() {
     putMouseThread.detach();
 
     // Keyboard thread
-    bool currentKeys[256] = { false };
-    static bool previousKeys[256] = { false };
     if (keyboardClientSocket == INVALID_SOCKET)
         std::cerr << "Failed to accept client connection" << std::endl;
     else {
         std::thread receiveKeyboardEventThread(ReceiveAndSendKey, keyboardClientSocket);
         receiveKeyboardEventThread.detach();
-
-        /*std::thread receiveThread(ReceiveKeys, keyboardClientSocket, std::ref(currentKeys));
-        receiveThread.detach();*/
     }
-
-    /*std::thread sendKeyboardThread(SendKeys, keyboardClientSocket, std::ref(currentKeys), std::ref(previousKeys));
-    sendKeyboardThread.detach();*/
 
     // Image thread
     if (screenClientSocket == INVALID_SOCKET)
