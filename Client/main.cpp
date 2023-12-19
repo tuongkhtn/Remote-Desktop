@@ -9,7 +9,7 @@ int main() {
 
 	// Set ip and port
 	int numOfServer;
-	std::cout << "Enter the server number: ";
+	std::cout << "Enter the number of servers: ";
 	std::cin >> numOfServer;
 
 	if (numOfServer > 0) {

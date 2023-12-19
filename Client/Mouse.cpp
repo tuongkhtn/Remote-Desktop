@@ -34,7 +34,6 @@ void Mouse::threadMouse(SOCKET clientSocket) {
 }
 
 bool getBufferMouseInformation(char* buf) {
-    std::cout << "In getBuffer func" << mouseState.getPosittion().x << " " << mouseState.getPosittion().y << "\n";
     // Convert mouse event to a string representation
     memset(buf, 0, 3 * sizeof(int));
     int eventData = 0;
@@ -86,7 +85,6 @@ void sendMouseInfomation(SOCKET sock) {
     int formerX = -1;
     int formerY = -1;
     MouseEvent formerEvent = MouseEvent::None;
-    std::cout << "In before before send func" << mouseState.getPosittion().x << " " << mouseState.getPosittion().y << "\n";
     while (1) {
         int x = mouseState.getPosittion().x;
         int y = mouseState.getPosittion().y;
@@ -97,7 +95,6 @@ void sendMouseInfomation(SOCKET sock) {
             formerX = x;
             formerY = y;
             formerEvent = mouseEvent;
-            std::cerr << "In send func" << mouseState.getPosittion().x << " " << mouseState.getPosittion().y << "\n";
             char buf[3 * sizeof(int)];
             bool isVal = getBufferMouseInformation(buf);
             if (isVal)
@@ -162,5 +159,4 @@ void mouseEventControl(int event, int x, int y, int flags, void* userData) {
         }
     }
 
-    std::cout << "In mouse event control  " << mouseState.getPosittion().x << " " << mouseState.getPosittion().y << "\n";
 }

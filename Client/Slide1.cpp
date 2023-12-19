@@ -111,8 +111,8 @@ void Slide1::setButtonItems(std::vector<Button*> buttonItems) {
 		this->buttonItems[i]->setColorRect(itemOff_cRect);
 
 		// Set button items text
-		std::string s = "Computer " + std::to_string(i + 1);
-		this->buttonItems[i]->setString(s);
+		/*std::string s = "Computer " + std::to_string(i + 1);
+		this->buttonItems[i]->setString(s);*/
 		this->buttonItems[i]->setPosText(this->buttonItems[i]->getText().getPosition().x, this->buttonItems[i]->getText().getPosition().y + 5.f);
 		this->buttonItems[i]->setColorText(itemOff_cText);
 	}
@@ -205,6 +205,11 @@ void Slide1::run(sf::RenderWindow& window, Client client) {
 				}
 				// Set button items
 				setButtonItems(buttonTemp);
+				for (int i = 0; i < client.getConnectPars().size(); i++) {
+					std::string ip;
+					ip.assign(client.getConnectPars()[i].first);
+					this->buttonItems[i]->setString(ip);
+				}
 			}
 
 
