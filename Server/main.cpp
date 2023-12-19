@@ -3,7 +3,6 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #include <opencv2/opencv.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -237,7 +236,6 @@ void ReceiveMouseEvent(SOCKET clientSocket) {
         memcpy(&x, buf, sizeof(int));
         memcpy(&y, buf + sizeof(int), sizeof(int));
         memcpy(&eventData, buf + 2 * sizeof(int), sizeof(int));
-        std::cout << "1. x = " << x << " y = " << y << " event " << eventData << std::endl;
         // Convert received string to the corresponding mouse event
         if (eventData == 11) {
             mouseEvent = MouseEvent::LeftButtonDown;
@@ -298,8 +296,6 @@ void putMouse() {
             input.mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE;
             input.mi.dx = x / 0.75;
             input.mi.dy = y / 0.75;
-            std::cout << "2. x = " << x << " y = " << y << "\n";
-            std::cout << "3. dx = " << input.mi.dx << " dy = " << input.mi.dy << "\n";
 
             switch (mouseEvent) {
             case MouseEvent::LeftButtonDown:
@@ -332,14 +328,11 @@ void putMouse() {
                 input.mi.dwFlags = MOUSEEVENTF_MOVE;
                 break;
             }
-            std::cout << "4. dx = " << input.mi.dx << " dy = " << input.mi.dy << "\n";
             SendInput(1, &input, sizeof(INPUT));
             SetCursorPos(input.mi.dx, input.mi.dy);
-            std::cout << "5. dx = " << input.mi.dx << " dy = " << input.mi.dy << "\n";
 
             POINT cursor;
             GetCursorPos(&cursor);
-            std::cout << "6. Real in Virtual " << cursor.x << " " << cursor.y << "\n";
         }
         Sleep(1);
     }
